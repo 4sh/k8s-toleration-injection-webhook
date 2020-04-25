@@ -1,0 +1,36 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: toleration-config
+  namespace: kube-system
+data:
+  TOLERATION_KEY_APPLICATION: dedicated
+  TOLERATION_VALUE_APPLICATION: application
+  TOLERATION_EFFECT_APPLICATION: NoSchedule
+---
+apiVersion: admissionregistration.k8s.io/v1beta1
+kind: MutatingWebhookConfiguration
+metadata:
+  name: toleration-injection-for-application
+  labels:
+    app: toleration-injection-for-application
+webhooks:
+  - name: toleration-injection.kube-system.svc.cluster.local
+    clientConfig:
+      caBundle: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURtekNDQW9PZ0F3SUJBZ0lSQUpWOTZHeHVoWHVuem5SK2RKSG9CT2t3RFFZSktvWklodmNOQVFFTEJRQXcKTHpFdE1Dc0dBMVVFQXhNa1pHUTVPVGxsTnpndE9XRmtOQzAwTm1WbExUbGxZell0TWpFeE9HWXlNV0k0WTJNeApNQjRYRFRJd01EUXlOVEl4TlRJeE5Gb1hEVEkxTURReU5ESXhOVEl4TkZvd0x6RXRNQ3NHQTFVRUF4TWtkRzlzClpYSmhkR2x2YmkxcGJtcGxZM1JwYjI0dWEzVmlaUzF6ZVhOMFpXMHVjM1pqTUlJQklqQU5CZ2txaGtpRzl3MEIKQVFFRkFBT0NBUThBTUlJQkNnS0NBUUVBcVluZ3JhWWhHZDgybHE2M29hMzJzVWFWWXZ5K2ljTkc0LzJlcHNTTgp2M3N4U1JybGNpcjBmKzF2a0FMdnRvS3BHa0ZmNm1aRE05T0pjaHZhWVJJVFVJcnRyc1VxNnhxL1pqMXo0YVYrCko0TzhseERWRmtPYWVUYkYyYjRXRmMveXhDNEFjS2ZpbkgyOXBnbXNkZUJ2ZjkrSUZlekdVbW9lTTgzdDNhdUkKeG02NjdFVjJjb041L2NDdWh1WGd2dUZMZGlOVVBhYkYrMWRCMVlzUkFzZ21MaGdiWFdtRVk4U0xGWnd2RmpJYQpKei9HWGo0M0V3YXhEWktZQy9FZ3FZOXozWW93LzE0b3ZweEQwUU1ZeUZLTWJHZE5QWWlkWkxMdUlmQSsrWmpKCndZNFA0WXpCUkQvVmNtWDVISTJwcXZraHhNYnAzUmRwYWVsYUNkTVRKWmxFN1FJREFRQUJvNEd4TUlHdU1Bd0cKQTFVZEV3RUIvd1FDTUFBd2daMEdBMVVkRVFTQmxUQ0Jrb0lVZEc5c1pYSmhkR2x2YmkxcGJtcGxZM1JwYjI2QwpJSFJ2YkdWeVlYUnBiMjR0YVc1cVpXTjBhVzl1TG10MVltVXRjM2x6ZEdWdGdpUjBiMnhsY21GMGFXOXVMV2x1CmFtVmpkR2x2Ymk1cmRXSmxMWE41YzNSbGJTNXpkbU9DTW5SdmJHVnlZWFJwYjI0dGFXNXFaV04wYVc5dUxtdDEKWW1VdGMzbHpkR1Z0TG5OMll5NWpiSFZ6ZEdWeUxteHZZMkZzTUEwR0NTcUdTSWIzRFFFQkN3VUFBNElCQVFDSApsc3NCT212NmRLbWdoT0c5ckFVNnBGRjU0UjU4QmpNOE5GbjMwTFZxcE1UMlNzQnRBekg0V1RDOVRMblFja04yCnFjUmlSS25qSjNDTVMvcllhMkZyMWx4ZUpPNm9hTXRTemhLcUFWOWthRDF4cC8vM25haUlrYmplUnJkMjlsSjcKWVkvaWRMbUVHNVJNRkxabDhUSWUrZS91WVpCRHI3MS9JRm5FVDl0aGFpTG03NS9IOGczeURWZFB5eDl4RzBWTAorYVhlN0NZSGVRUHhDRFFMcXNEeSsxQTZwanM5ZnJXOEZsNGU5OFpNSFRrNklvWlZHODUzN05MWmFua1lMbTRkCms5WjV4NnZ0QklIdVZRZGMxV3N0cXNQS3VZdE52elMxc1lQWUhyWEtSZ1JHSFJsUFRlSW9tM010WS8wOUdEbzAKdkhtTjNocmF3N212WUJPbVdxajAKLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=
+      service:
+        name: toleration-injection
+        namespace: kube-system
+        path: "/mutate/application"
+    rules:
+      - operations: ["CREATE"]
+        apiGroups: [""]
+        apiVersions: ["v1"]
+        resources: ["pods"]
+    sideEffects: None
+    timeoutSeconds: 5
+    failurePolicy: Fail
+    namespaceSelector:
+      matchLabels:
+        type: application
