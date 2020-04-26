@@ -1,11 +1,13 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"html"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/gorilla/pat"
@@ -48,8 +50,26 @@ func sendError(err error, w http.ResponseWriter) {
 	fmt.Fprintf(w, "%s", err)
 }
 
+type config struct {
+	certFile string
+	keyFile  string
+}
+
+func initFlags() *config {
+	cfg := &config{}
+
+	fl := flag.NewFlagSet(os.Args[0], flag.ExitOnError)
+	fl.StringVar(&cfg.certFile, "tls-cert-file", "", "TLS certificate file")
+	fl.StringVar(&cfg.keyFile, "tls-key-file", "", "TLS key file")
+
+	fl.Parse(os.Args[1:])
+	return cfg
+}
+
 func main() {
 	log.Println("Starting server ...")
+
+	cfg := initFlags()
 
 	var mux *pat.Router = pat.New()
 
@@ -64,5 +84,5 @@ func main() {
 		MaxHeaderBytes: 1 << 20, // 1048576
 	}
 
-	log.Fatal(s.ListenAndServeTLS("./ssl/toleration-injection.pem", "./ssl/toleration-injection.key"))
+	log.Fatal(s.ListenAndServeTLS(cfg.certFile, cfg.keyFile))
 }

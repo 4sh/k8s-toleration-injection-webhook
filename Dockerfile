@@ -12,6 +12,4 @@ RUN make app
 FROM scratch
 WORKDIR /app
 COPY --from=build /go/src/github.com/4sh/k8s-toleration-injection-webhook/toleration-injection-server .
-COPY --from=build /go/src/github.com/4sh/k8s-toleration-injection-webhook/ssl ssl
-COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
-CMD ["/app/toleration-injection-server"]
+ENTRYPOINT ["/app/toleration-injection-server"]
