@@ -1,5 +1,5 @@
 NAME = toleration-injection-server
-IMAGE_PREFIX = gcr.io/quatreapp
+IMAGE_PREFIX = europe-docker.pkg.dev/quatreapp/qsh-ops
 IMAGE_NAME = k8s-toleration-injection-webhook
 IMAGE_VERSION = $$(git log --abbrev-commit --format=%h -s | head -n 1)
 
