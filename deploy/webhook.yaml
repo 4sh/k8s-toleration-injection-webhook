@@ -37,7 +37,7 @@ spec:
           operator: Exists
       containers:
         - name: toleration-injection-webhook
-          image: gcr.io/quatreapp/k8s-toleration-injection-webhook:1.0.0-1
+          image: europe-docker.pkg.dev/quatreapp/qsh-ops/k8s-toleration-injection-webhook:1.0.0-1
           imagePullPolicy: Always
           resources:
             limits:
